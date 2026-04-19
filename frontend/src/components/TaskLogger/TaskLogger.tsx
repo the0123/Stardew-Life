@@ -18,6 +18,23 @@ const EFFORTS: { value: Effort; label: string; xp: number }[] = [
   { value: 'deep',   label: 'Deep',   xp: 50 },
 ]
 
+const PRESETS: Record<Category, string[]> = {
+  health:   ['Walk 30 mins', 'Drink 8 glasses of water', 'Workout', 'Meditate', 'Sleep 8 hrs'],
+  work:     ['Deep work session', 'Clear inbox', 'Code review', 'Team meeting', 'Planning session'],
+  learning: ['Read 20 pages', 'Watch tutorial', 'Practice skill', 'Study session', 'Take notes'],
+  social:   ['Check in with friend', 'Family time', 'Share something', 'Support someone', 'Date night'],
+}
+
+interface ToastProps { message: string }
+
+function Toast({ message }: ToastProps) {
+  return (
+    <div className="fixed bottom-24 left-1/2 -translate-x-1/2 bg-farm-gold text-green-900 font-semibold px-5 py-2 rounded-full shadow-xl z-50 text-sm animate-bounce-once">
+      {message}
+    </div>
+  )
+}
+
 export default function TaskLogger() {
   const setFarm = useFarmStore(s => s.setFarm)
   const [open, setOpen] = useState(false)
@@ -25,7 +42,12 @@ export default function TaskLogger() {
   const [effort, setEffort] = useState<Effort>('medium')
   const [title, setTitle] = useState('')
   const [loading, setLoading] = useState(false)
-  const [success, setSuccess] = useState(false)
+  const [toast, setToast] = useState<string | null>(null)
+
+  const showToast = (msg: string) => {
+    setToast(msg)
+    setTimeout(() => setToast(null), 2000)
+  }
 
   const close = () => { setOpen(false); setTitle('') }
 
@@ -36,8 +58,8 @@ export default function TaskLogger() {
     try {
       const { data } = await api.post('/tasks/log', { category, effort, title: title.trim() })
       if (data.farm_state) setFarm(data.farm_state)
-      setSuccess(true)
-      setTimeout(() => { setSuccess(false); close() }, 900)
+      close()
+      showToast('✓ Task logged! 🌱')
     } catch (err) {
       console.error(err)
     } finally {
@@ -47,6 +69,8 @@ export default function TaskLogger() {
 
   return (
     <>
+      {toast && <Toast message={toast} />}
+
       <button
         onClick={() => setOpen(true)}
         className="fixed bottom-6 right-6 w-14 h-14 bg-farm-gold rounded-full shadow-xl flex items-center justify-center text-3xl font-bold text-green-900 hover:bg-yellow-400 transition-colors z-40"
@@ -58,7 +82,7 @@ export default function TaskLogger() {
       {open && (
         <div className="fixed inset-0 z-50 flex flex-col justify-end">
           <div className="absolute inset-0 bg-black/60" onClick={close} />
-          <div className="relative bg-green-900 rounded-t-2xl p-6 pb-10 space-y-4">
+          <div className="relative bg-green-900 rounded-t-2xl p-6 pb-10 space-y-4 max-h-[90vh] overflow-y-auto">
             <h2 className="text-farm-gold font-bold text-lg">Log a Task</h2>
 
             <form onSubmit={handleSubmit} className="space-y-4">
@@ -92,13 +116,31 @@ export default function TaskLogger() {
                 ))}
               </div>
 
+              <div>
+                <p className="text-green-400 text-xs mb-2">Quick select:</p>
+                <div className="flex flex-wrap gap-2">
+                  {PRESETS[category].map(preset => (
+                    <button
+                      key={preset}
+                      type="button"
+                      onClick={() => setTitle(preset)}
+                      className={`text-xs px-3 py-1 rounded-full border transition-all
+                        ${title === preset
+                          ? 'bg-farm-gold text-green-900 border-farm-gold font-semibold'
+                          : 'border-green-600 text-green-300 hover:border-farm-gold hover:text-farm-gold'}`}
+                    >
+                      {preset}
+                    </button>
+                  ))}
+                </div>
+              </div>
+
               <input
                 type="text"
-                placeholder="What did you do?"
+                placeholder="Or type your own..."
                 value={title}
                 onChange={e => setTitle(e.target.value)}
                 className="w-full bg-green-950 border border-farm-green rounded-lg px-3 py-3 text-white text-sm focus:outline-none focus:border-farm-gold"
-                autoFocus
               />
 
               <button
@@ -106,7 +148,7 @@ export default function TaskLogger() {
                 disabled={loading || !title.trim()}
                 className="w-full bg-farm-gold hover:bg-yellow-400 disabled:opacity-40 text-green-900 font-bold py-3 rounded-lg transition-colors text-base"
               >
-                {success ? '✓ Logged!' : loading ? 'Logging...' : 'Log Task 🌱'}
+                {loading ? 'Logging...' : 'Log Task 🌱'}
               </button>
             </form>
           </div>

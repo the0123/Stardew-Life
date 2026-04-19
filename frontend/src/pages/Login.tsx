@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { useNavigate } from 'react-router-dom'
+import { useNavigate, Link } from 'react-router-dom'
 import api from '../api/client'
 import { useAuthStore } from '../stores/authStore'
 
@@ -68,6 +68,11 @@ export default function Login() {
             {loading ? 'Signing in...' : 'Sign In'}
           </button>
         </form>
+
+        <p className="text-green-500 text-xs text-center mt-4">
+          Have an invite code?{' '}
+          <Link to="/register" className="text-farm-gold hover:underline">Create account</Link>
+        </p>
       </div>
     </div>
   )

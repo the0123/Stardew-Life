@@ -11,6 +11,11 @@ class RegisterRequest(BaseModel):
     invite_code: str
 
 
+class ChangePasswordRequest(BaseModel):
+    current_password: str
+    new_password: str
+
+
 class LoginRequest(BaseModel):
     email: EmailStr
     password: str

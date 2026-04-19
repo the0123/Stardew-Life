@@ -2,6 +2,7 @@ import { useEffect } from 'react'
 import FarmGrid from '../components/FarmGrid/FarmGrid'
 import StatsPanel from '../components/StatsPanel/StatsPanel'
 import TaskLogger from '../components/TaskLogger/TaskLogger'
+import NavDrawer from '../components/NavDrawer/NavDrawer'
 import { getMyFarm } from '../api/farm'
 import { useAuthStore } from '../stores/authStore'
 import { useFarmStore } from '../stores/farmStore'
@@ -21,7 +22,10 @@ export default function Home() {
   return (
     <div className="min-h-screen bg-farm-dark text-white">
       <header className="flex items-center justify-between px-4 py-3 bg-green-900 border-b border-farm-green">
-        <h1 className="text-farm-gold font-bold">🌾 {user?.display_name ?? 'Your Farm'}</h1>
+        <div className="flex items-center gap-2">
+          <NavDrawer />
+          <h1 className="text-farm-gold font-bold">🌾 {user?.display_name ?? 'Your Farm'}</h1>
+        </div>
         <span className="text-green-400 text-sm capitalize">{farm?.season ?? '...'}</span>
       </header>
 

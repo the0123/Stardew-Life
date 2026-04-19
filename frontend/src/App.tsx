@@ -4,6 +4,7 @@ import api from './api/client'
 import FriendFarm from './pages/FriendFarm'
 import Home from './pages/Home'
 import Login from './pages/Login'
+import Register from './pages/Register'
 import { useAuthStore } from './stores/authStore'
 
 function ProtectedRoute({ children }: { children: React.ReactNode }) {
@@ -44,6 +45,7 @@ export default function App() {
   return (
     <Routes>
       <Route path="/login" element={<Login />} />
+      <Route path="/register" element={<Register />} />
       <Route path="/farm/:username" element={<FriendFarm />} />
       <Route path="/" element={<ProtectedRoute><Home /></ProtectedRoute>} />
     </Routes>

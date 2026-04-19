@@ -1,10 +1,13 @@
 import { useEffect, useState } from 'react'
 import { Navigate, Route, Routes } from 'react-router-dom'
 import api from './api/client'
+import Admin from './pages/Admin'
 import FriendFarm from './pages/FriendFarm'
+import History from './pages/History'
 import Home from './pages/Home'
 import Login from './pages/Login'
 import Register from './pages/Register'
+import Streaks from './pages/Streaks'
 import { useAuthStore } from './stores/authStore'
 
 function ProtectedRoute({ children }: { children: React.ReactNode }) {
@@ -47,6 +50,9 @@ export default function App() {
       <Route path="/login" element={<Login />} />
       <Route path="/register" element={<Register />} />
       <Route path="/farm/:username" element={<FriendFarm />} />
+      <Route path="/history" element={<ProtectedRoute><History /></ProtectedRoute>} />
+      <Route path="/streaks" element={<ProtectedRoute><Streaks /></ProtectedRoute>} />
+      <Route path="/admin" element={<ProtectedRoute><Admin /></ProtectedRoute>} />
       <Route path="/" element={<ProtectedRoute><Home /></ProtectedRoute>} />
     </Routes>
   )

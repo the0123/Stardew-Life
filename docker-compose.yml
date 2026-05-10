@@ -32,7 +32,13 @@ services:
   frontend:
     build: ./frontend
     ports:
-      - "8080:80"
+      - "9009:80"
+    labels:
+      homepage.group: Applications
+      homepage.name: Stardew Life
+      homepage.icon: http://100.106.26.99:9009/icons/icon-512.png
+      homepage.href: http://100.106.26.99:9009
+      homepage.description: SDV Life Gamification
     depends_on:
       - api
     restart: unless-stopped

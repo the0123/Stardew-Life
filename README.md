@@ -46,7 +46,7 @@ Log a task → Seed → Sprout → Grown → Harvest (gold + XP)
 4 days without logging               → Crop disappears
 ```
 
-You'll receive a push notification when a crop enters the withered state. Harvest fully-grown crops to collect gold and XP.
+Wither state is evaluated each time your farm is loaded. Harvest fully-grown crops to collect gold and XP.
 
 ---
 
@@ -87,7 +87,13 @@ The app will be available at `http://<host>:9009`.
 docker compose exec api alembic upgrade head
 ```
 
-The admin account is seeded automatically from the `ADMIN_EMAIL` environment variable on first startup. Log in with that email to access the `/admin` panel and generate invite codes.
+On first startup with no existing users, the API prints a one-time bootstrap invite code to its logs:
+
+```bash
+docker compose logs api | grep BOOTSTRAP
+```
+
+Use that code to register at the app. The first account created is automatically granted admin. From there, use the `/admin` panel to generate invite codes for everyone else.
 
 ### Useful commands
 
@@ -110,7 +116,7 @@ docker compose down && docker compose up -d
 | Layer | Technology |
 |---|---|
 | Backend | Python 3.12, FastAPI, SQLAlchemy 2.0 |
-| Frontend | React 18, TypeScript, Vite, Tailwind CSS |
+| Frontend | React 18, TypeScript, Vite, Tailwind CSS, Zustand |
 | Database | PostgreSQL 16 |
 | Auth | bcrypt + JWT (httpOnly refresh cookie) |
 | Notifications | Web Push API + VAPID |

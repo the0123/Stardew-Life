@@ -4,6 +4,7 @@ export type Tile = {
   type: string
   stage: number
   category: string
+  title?: string
   planted_at: string
   last_tended: string
 } | null

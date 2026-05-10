@@ -15,6 +15,14 @@ const STAGE_EMOJI: Record<number, string> = {
   3: '✨',
 }
 
+const STAGE_LABEL: Record<number, string> = {
+  [-1]: 'Withered',
+  0: 'Seedling',
+  1: 'Growing',
+  2: 'Almost ready',
+  3: 'Ready to harvest',
+}
+
 function TileCell({ data }: { data: Tile }) {
   if (!data) {
     return (
@@ -26,12 +34,23 @@ function TileCell({ data }: { data: Tile }) {
   const withered = data.stage === -1
 
   return (
-    <div
-      className={`aspect-square rounded border ${bg} flex items-center justify-center text-base transition-opacity
-        ${withered ? 'opacity-25 grayscale' : 'opacity-80 hover:opacity-100'}`}
-      title={`${data.type} · ${data.category} · stage ${data.stage}`}
-    >
-      {STAGE_EMOJI[data.stage] ?? '🌱'}
+    <div className="relative group aspect-square">
+      <div
+        className={`w-full h-full rounded border ${bg} flex items-center justify-center text-base transition-opacity
+          ${withered ? 'opacity-25 grayscale' : 'opacity-80 hover:opacity-100'}`}
+      >
+        {STAGE_EMOJI[data.stage] ?? '🌱'}
+      </div>
+
+      {/* Hover tooltip */}
+      <div className="pointer-events-none absolute bottom-full left-1/2 -translate-x-1/2 mb-2 z-50
+        opacity-0 group-hover:opacity-100 transition-opacity duration-150">
+        <div className="bg-green-950 border border-farm-gold rounded-lg px-3 py-2 shadow-xl text-center whitespace-nowrap">
+          <p className="text-white text-xs font-semibold">{data.title ?? data.type}</p>
+          <p className="text-farm-gold text-xs">{STAGE_LABEL[data.stage] ?? 'Growing'}</p>
+        </div>
+        <div className="w-2 h-2 bg-green-950 border-r border-b border-farm-gold rotate-45 mx-auto -mt-1" />
+      </div>
     </div>
   )
 }

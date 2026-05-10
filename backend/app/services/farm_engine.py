@@ -101,6 +101,7 @@ def apply_task(state: dict, category: str, effort: str, title: str, now: datetim
             break
 
     if existing_tile:
+        existing_tile["log_count"] = existing_tile.get("log_count", 1) + 1
         if existing_tile["last_tended"] != today:
             existing_tile["last_tended"] = today
             if existing_tile["stage"] == -1:
@@ -119,6 +120,7 @@ def apply_task(state: dict, category: str, effort: str, title: str, now: datetim
                 "stage": 0,
                 "category": category,
                 "title": title,
+                "log_count": 1,
                 "planted_at": today,
                 "last_tended": today,
             }

@@ -78,22 +78,36 @@ To receive wither alerts:
 docker compose up -d
 ```
 
-The app will be available at `http://<host>:9009`.
-
 ### First-time setup
 
+The API requires the database schema to exist before it can start. On a fresh install the API will crash-loop until migrations are applied — this is expected.
+
+**1. Run migrations** using a one-off container (the API doesn't need to be running for this):
+
 ```bash
-# Apply database migrations
-docker compose exec api alembic upgrade head
+docker compose run --rm api alembic upgrade head
 ```
 
-On first startup with no existing users, the API prints a one-time bootstrap invite code to its logs:
+**2. Restart the API** after migrations complete:
+
+```bash
+docker compose up -d --force-recreate api
+```
+
+**3. Get your bootstrap invite code** — on first startup with no users, the API generates a one-time code and prints it to the logs:
 
 ```bash
 docker compose logs api | grep BOOTSTRAP
 ```
 
-Use that code to register at the app. The first account created is automatically granted admin. From there, use the `/admin` panel to generate invite codes for everyone else.
+**4. Register** at `http://<host>:9009` using that code. The first account created is automatically granted admin.
+
+From there, use the `/admin` panel to generate invite codes for everyone else.
+
+> **Note:** `ALLOWED_ORIGINS` in your `.env` must be a JSON array, not a plain string:
+> ```
+> ALLOWED_ORIGINS=["http://your-host:9009"]
+> ```
 
 ### Useful commands
 

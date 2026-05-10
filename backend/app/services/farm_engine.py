@@ -74,8 +74,13 @@ def apply_daily_tick(state: dict, today: date) -> dict:
     return state
 
 
-def apply_task(state: dict, category: str, effort: str, now: datetime) -> dict:
-    """Pure function. Apply a logged task to farm state, return updated state."""
+def apply_task(state: dict, category: str, effort: str, title: str, now: datetime) -> dict:
+    """Pure function. Apply a logged task to farm state, return updated state.
+
+    Each unique title+category pair maps to one crop. Logging tends that crop;
+    if none exists yet, a new seed is planted. Multiple logs of the same title
+    in one day are idempotent on the crop (XP is still awarded each time).
+    """
     state = copy.deepcopy(state)
     today = now.date().isoformat()
 
@@ -85,29 +90,38 @@ def apply_task(state: dict, category: str, effort: str, now: datetime) -> dict:
 
     grid = state["grid"]
 
-    # Advance un-tended crops of this category
+    # Find existing crop for this title + category
+    existing_tile = None
     for row in grid:
         for tile in row:
-            if tile and tile["category"] == category and tile["last_tended"] != today:
-                if tile["stage"] >= 0:
-                    tile["last_tended"] = today
-                    if tile["stage"] < 3:
-                        tile["stage"] += 1
+            if tile and tile["category"] == category and tile.get("title") == title:
+                existing_tile = tile
+                break
+        if existing_tile:
+            break
 
-    # Plant new seed
-    tier = EFFORT_TIER[effort]
-    crops = CATEGORY_CROPS[category]
-    crop_type = crops[min(tier, len(crops) - 1)]
-    empty = _find_empty_tile(grid)
-    if empty:
-        r, c = empty
-        grid[r][c] = {
-            "type": crop_type,
-            "stage": 0,
-            "category": category,
-            "planted_at": today,
-            "last_tended": today,
-        }
+    if existing_tile:
+        if existing_tile["last_tended"] != today:
+            existing_tile["last_tended"] = today
+            if existing_tile["stage"] == -1:
+                existing_tile["stage"] = 0  # revive withered crop
+            elif existing_tile["stage"] < 3:
+                existing_tile["stage"] += 1
+    else:
+        tier = EFFORT_TIER[effort]
+        crops = CATEGORY_CROPS[category]
+        crop_type = crops[min(tier, len(crops) - 1)]
+        empty = _find_empty_tile(grid)
+        if empty:
+            r, c = empty
+            grid[r][c] = {
+                "type": crop_type,
+                "stage": 0,
+                "category": category,
+                "title": title,
+                "planted_at": today,
+                "last_tended": today,
+            }
 
     state["grid"] = grid
     return apply_daily_tick(state, now.date())

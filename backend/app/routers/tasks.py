@@ -37,7 +37,7 @@ async def log_task(
     farm_result = await db.execute(select(FarmState).where(FarmState.user_id == user.id))
     farm = farm_result.scalar_one_or_none()
     if farm:
-        farm.state = apply_task(farm.state, body.category, body.effort, now)
+        farm.state = apply_task(farm.state, body.category, body.effort, body.title, now)
         flag_modified(farm, "state")
 
     await db.commit()

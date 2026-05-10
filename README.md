@@ -33,20 +33,24 @@ Once logged in, tap the **+** button to log a task.
   - Deep (1+ hour / milestone) — 50 XP
 - **Title** — a short description of what you did.
 
-Each logged task plants or advances a crop on your farm in the matching category's section.
+Each unique task title gets its own crop on the farm. Logging the same task again tends that crop rather than planting a new one — so "Drink 8 glasses of water" will always map to the same plant. The number of times you've logged a task is shown as a small badge on the tile and in the tooltip as `(Nx)`.
 
 ---
 
 ## Crop Lifecycle
 
 ```
-Log a task → Seed → Sprout → Grown → Harvest (gold + XP)
+Log a task → Seed → Sprout → Almost ready → Harvest (gold + XP)
 
-3 days without logging in a category → Withered (warning)
-4 days without logging               → Crop disappears
+3 days without logging that task → Withered (warning)
+4 days without logging           → Crop disappears
 ```
 
 Wither state is evaluated each time your farm is loaded. Harvest fully-grown crops to collect gold and XP.
+
+### Inspecting crops
+
+Hover over a crop (desktop) or tap it (mobile) to see the task name, log count, and current growth stage. Tap anywhere else to dismiss.
 
 ---
 

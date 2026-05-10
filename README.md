@@ -58,7 +58,9 @@ Every user has a public farm profile at `/farm/<username>`. No login is required
 
 ## Push Notifications
 
-To receive wither alerts:
+> **Note:** Push notification delivery is not yet implemented. The app accepts push subscriptions but wither alerts are not currently sent. This is planned for a future update.
+
+When implemented, enabling notifications will work as follows:
 
 1. When prompted, allow notifications in your browser.
 2. **iOS users**: Push notifications only work on iOS 16.4+ when the app is added to your Home Screen. Tap the share icon in Safari → *Add to Home Screen*, then enable notifications from there.
@@ -72,42 +74,42 @@ To receive wither alerts:
 - Docker and Docker Compose
 - A `.env` file (copy from `.env.example` and fill in values)
 
-### Start
-
-```bash
-docker compose up -d
-```
-
 ### First-time setup
-
-The API requires the database schema to exist before it can start. On a fresh install the API will crash-loop until migrations are applied — this is expected.
-
-**1. Run migrations** using a one-off container (the API doesn't need to be running for this):
-
-```bash
-docker compose run --rm api alembic upgrade head
-```
-
-**2. Restart the API** after migrations complete:
-
-```bash
-docker compose up -d --force-recreate api
-```
-
-**3. Get your bootstrap invite code** — on first startup with no users, the API generates a one-time code and prints it to the logs:
-
-```bash
-docker compose logs api | grep BOOTSTRAP
-```
-
-**4. Register** at `http://<host>:9009` using that code. The first account created is automatically granted admin.
-
-From there, use the `/admin` panel to generate invite codes for everyone else.
 
 > **Note:** `ALLOWED_ORIGINS` in your `.env` must be a JSON array, not a plain string:
 > ```
 > ALLOWED_ORIGINS=["http://your-host:9009"]
 > ```
+
+The API will fail to start if the database schema doesn't exist yet, so run migrations before bringing up the full stack.
+
+**1. Start postgres only:**
+
+```bash
+docker compose up -d postgres
+```
+
+**2. Run migrations:**
+
+```bash
+docker compose run --rm api alembic upgrade head
+```
+
+**3. Start everything:**
+
+```bash
+docker compose up -d
+```
+
+**4. Get your bootstrap invite code** — on first startup with no users, the API generates a one-time code and prints it to the logs:
+
+```bash
+docker compose logs api | grep BOOTSTRAP
+```
+
+**5. Register** at `http://<host>:9009` using that code. The first account created is automatically granted admin.
+
+From there, use the `/admin` panel to generate invite codes for everyone else.
 
 ### Useful commands
 

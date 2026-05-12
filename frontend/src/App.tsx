@@ -21,6 +21,12 @@ export default function App() {
   const [initializing, setInitializing] = useState(true)
 
   useEffect(() => {
+    if ('serviceWorker' in navigator) {
+      navigator.serviceWorker.register('/sw.js').catch(() => {/* sw registration failed silently */})
+    }
+  }, [])
+
+  useEffect(() => {
     const init = async () => {
       try {
         const { data: tokenData } = await api.post('/auth/refresh')

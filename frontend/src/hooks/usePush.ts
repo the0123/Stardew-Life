@@ -16,7 +16,11 @@ export function usePush() {
   const [loading, setLoading] = useState(false)
 
   useEffect(() => {
-    if (!('serviceWorker' in navigator) || !('PushManager' in window)) return
+    if (
+      !('serviceWorker' in navigator) ||
+      !('PushManager' in window) ||
+      !('Notification' in window)
+    ) return
     setSupported(true)
     navigator.serviceWorker.ready.then(reg =>
       reg.pushManager.getSubscription().then(sub => setSubscribed(!!sub))

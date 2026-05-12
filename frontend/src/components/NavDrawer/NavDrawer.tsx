@@ -122,6 +122,12 @@ export default function NavDrawer({ friends = [] }: NavDrawerProps) {
                   </p>
                 )}
 
+                {isIos && isStandalone && !pushSupported && !pushLoading && (
+                  <p className="mx-3 mb-2 text-xs text-yellow-400 bg-yellow-900/30 rounded px-2 py-1.5">
+                    Push notifications require iOS 16.4 or later. If you're on a supported version, try reloading the app.
+                  </p>
+                )}
+
                 {pushSupported && (
                   <button
                     onClick={pushSubscribed ? pushUnsubscribe : pushSubscribe}

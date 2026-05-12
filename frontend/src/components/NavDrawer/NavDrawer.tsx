@@ -1,11 +1,7 @@
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import api from '../../api/client'
-import { usePush } from '../../hooks/usePush'
 import { useAuthStore } from '../../stores/authStore'
-
-const isIos = /iphone|ipad|ipod/i.test(navigator.userAgent)
-const isStandalone = ('standalone' in navigator) && (navigator as unknown as { standalone: boolean }).standalone
 
 interface NavDrawerProps {
   friends?: string[]
@@ -14,7 +10,6 @@ interface NavDrawerProps {
 export default function NavDrawer({ friends = [] }: NavDrawerProps) {
   const navigate = useNavigate()
   const { user, logout: storeLogout } = useAuthStore()
-  const { supported: pushSupported, subscribed: pushSubscribed, loading: pushLoading, subscribe: pushSubscribe, unsubscribe: pushUnsubscribe } = usePush()
   const [open, setOpen] = useState(false)
   const [showPasswordForm, setShowPasswordForm] = useState(false)
   const [currentPassword, setCurrentPassword] = useState('')
@@ -115,29 +110,6 @@ export default function NavDrawer({ friends = [] }: NavDrawerProps) {
 
               <div className="pt-2">
                 <p className="text-green-500 text-xs px-3 pb-1 uppercase tracking-wider">Account</p>
-
-                {isIos && !isStandalone && (
-                  <p className="mx-3 mb-2 text-xs text-yellow-400 bg-yellow-900/30 rounded px-2 py-1.5">
-                    Add to Home Screen to enable push notifications on iOS.
-                  </p>
-                )}
-
-                {isIos && isStandalone && !pushSupported && !pushLoading && (
-                  <p className="mx-3 mb-2 text-xs text-yellow-400 bg-yellow-900/30 rounded px-2 py-1.5">
-                    Push notifications require iOS 16.4 or later. If you're on a supported version, try reloading the app.
-                  </p>
-                )}
-
-                {pushSupported && (
-                  <button
-                    onClick={pushSubscribed ? pushUnsubscribe : pushSubscribe}
-                    disabled={pushLoading}
-                    className="w-full text-left flex items-center gap-3 px-3 py-2 rounded-lg text-green-100 hover:bg-green-800 transition-colors disabled:opacity-50"
-                  >
-                    <span>{pushSubscribed ? '🔔' : '🔕'}</span>
-                    {pushLoading ? 'Updating...' : pushSubscribed ? 'Notifications On' : 'Enable Notifications'}
-                  </button>
-                )}
 
                 <button
                   onClick={() => setShowPasswordForm(p => !p)}

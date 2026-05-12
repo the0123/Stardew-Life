@@ -60,17 +60,6 @@ Every user has a public farm profile at `/farm/<username>`. No login is required
 
 ---
 
-## Push Notifications
-
-> **Note:** Push notification delivery is not yet implemented. The app accepts push subscriptions but wither alerts are not currently sent. This is planned for a future update.
-
-When implemented, enabling notifications will work as follows:
-
-1. When prompted, allow notifications in your browser.
-2. **iOS users**: Push notifications only work on iOS 16.4+ when the app is added to your Home Screen. Tap the share icon in Safari → *Add to Home Screen*, then enable notifications from there.
-
----
-
 ## Self-Hosting
 
 ### Requirements
@@ -139,5 +128,4 @@ docker compose down && docker compose up -d
 | Frontend | React 18, TypeScript, Vite, Tailwind CSS, Zustand |
 | Database | PostgreSQL 16 |
 | Auth | bcrypt + JWT (httpOnly refresh cookie) |
-| Notifications | Web Push API + VAPID |
 | Container | Docker Compose |
